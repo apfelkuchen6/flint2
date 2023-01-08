@@ -17,43 +17,40 @@
 int
 fmpz_lll_is_reduced(const fmpz_mat_t B, const fmpz_lll_t fl, flint_bitcnt_t prec)
 {
+    int res;
+    fmpz_mat_t BB;
+
+    /*
+        The is_reduced checkers below could only return 1 when B has full row
+        rank. Therefore, the definition of fmpz_lll_is_reduced needs to include
+        a stripping out of *initial* zero rows (and possibly the corresponding
+        columns in case rt == GRAM) followed by a call to one of these checkers.
+    */
     if (fl->rt == Z_BASIS)
     {
-        /*
-            The is_reduced checkers below could only return 1 when B has full
-            row rank. Therefore, the definition of fmpz_lll_is_reduced needs to
-            include a stripping out of *initial* zero rows followed by a call
-            to one of these checkers.
-        */
-        int res;
-        fmpz_mat_t BB;
-
         _fmpz_mat_read_only_window_init_strip_initial_zero_rows(BB, B);
-
-        if (fmpz_lll_is_reduced_d(BB, fl))
-        {
-            res = 1;
-        }
-        else if (fmpz_lll_is_reduced_mpfr(BB, fl, prec))
-        {
-            res = 1;
-        }
-        else
-        {
-            res = fmpz_mat_is_reduced(BB, fl->delta, fl->eta);
-        }
-
-        _fmpz_mat_read_only_window_clear(BB);
-        return res;
     }
     else
     {
-        if (fmpz_lll_is_reduced_d(B, fl))
-            return 1;
-
-        if (fmpz_lll_is_reduced_mpfr(B, fl, prec))
-            return 1;
-
-        return fmpz_mat_is_reduced_gram(B, fl->delta, fl->eta);
+        _fmpz_mat_read_only_window_init_strip_initial_zero_rows_and_corresponding_cols(BB, B);
     }
+
+    if (fmpz_lll_is_reduced_d(BB, fl))
+    {
+        res = 1;
+    }
+    else if (fmpz_lll_is_reduced_mpfr(BB, fl, prec))
+    {
+        res = 1;
+    }
+    else
+    {
+        if (fl->rt == Z_BASIS)
+            res = fmpz_mat_is_reduced(BB, fl->delta, fl->eta);
+        else
+            res = fmpz_mat_is_reduced_gram(B, fl->delta, fl->eta);
+    }
+
+    _fmpz_mat_read_only_window_clear(BB);
+    return res;
 }

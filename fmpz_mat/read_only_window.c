@@ -30,3 +30,20 @@ void _fmpz_mat_read_only_window_init_strip_initial_zero_rows(
     A->r = r - i;
     A->c = c;
 }
+
+void _fmpz_mat_read_only_window_init_strip_initial_zero_rows_and_corresponding_cols(
+    fmpz_mat_t A,
+    const fmpz_mat_t B)
+{
+    slong r = B->r;
+    slong c = B->c;
+    slong i;
+
+    for (i = 0; i < r; i++)
+    {
+        if (!_fmpz_vec_is_zero(B->rows[i], c))
+            break;
+    }
+
+    fmpz_mat_window_init(A, B, i, i, r, c);
+}

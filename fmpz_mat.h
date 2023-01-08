@@ -157,6 +157,9 @@ FLINT_DLL void fmpz_mat_concat_vertical(fmpz_mat_t res,
 FLINT_DLL void _fmpz_mat_read_only_window_init_strip_initial_zero_rows(
                                              fmpz_mat_t A, const fmpz_mat_t B);
 
+FLINT_DLL void _fmpz_mat_read_only_window_init_strip_initial_zero_rows_and_corresponding_cols(
+                                             fmpz_mat_t A, const fmpz_mat_t B);
+
 FMPZ_MAT_INLINE void _fmpz_mat_read_only_window_clear(fmpz_mat_t A)
 {
 }

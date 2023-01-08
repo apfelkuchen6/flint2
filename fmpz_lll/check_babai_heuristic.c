@@ -350,7 +350,7 @@ fmpz_lll_check_babai_heuristic(int kappa, fmpz_mat_t B, fmpz_mat_t U,
                         int sgn = mpf_sgn(mpf_mat_entry(mu, kappa, j));
                         if (sgn >= 0)   /* in this case, X is 1 */
                         {
-                            fmpz_set_ui(x + j, 1);
+                            fmpz_set_ui(x + j - zeros - 1, 1);
                             for (k = zeros + 1; k < j; k++)
                             {
                                 mpf_sub(mpf_mat_entry(mu, kappa, k),
@@ -371,7 +371,7 @@ fmpz_lll_check_babai_heuristic(int kappa, fmpz_mat_t B, fmpz_mat_t U,
                         }
                         else    /* otherwise X is -1 */
                         {
-                            fmpz_set_si(x + j, -WORD(1));
+                            fmpz_set_si(x + j - zeros - 1, -WORD(1));
                             for (k = zeros + 1; k < j; k++)
                             {
                                 mpf_add(mpf_mat_entry(mu, kappa, k),
@@ -417,7 +417,7 @@ fmpz_lll_check_babai_heuristic(int kappa, fmpz_mat_t B, fmpz_mat_t U,
                         {
                             /* X is stored in an slong */
                             xx = flint_mpf_get_si(tmp);
-                            fmpz_set_si(x + j, xx);
+                            fmpz_set_si(x + j - zeros - 1, xx);
                             if (fl->rt == Z_BASIS && B != NULL)
                             {
                                 _fmpz_vec_scalar_submul_si(B->rows[kappa],
@@ -432,19 +432,19 @@ fmpz_lll_check_babai_heuristic(int kappa, fmpz_mat_t B, fmpz_mat_t U,
                         }
                         else
                         {
-                            fmpz_set_mpf(x + j, tmp);
+                            fmpz_set_mpf(x + j - zeros - 1, tmp);
                             if (fl->rt == Z_BASIS && B != NULL)
                             {
                                 _fmpz_vec_scalar_submul_fmpz(B->rows[kappa],
                                                              B->rows[j], n,
-                                                             x + j);
+                                                             x + j - zeros - 1);
                             }
                             if (U != NULL)
                             {
                                 _fmpz_vec_scalar_submul_fmpz(U->rows
                                                              [kappa],
                                                              U->rows[j],
-                                                             U->c, x + j);
+                                                             U->c, x + j - zeros - 1);
                             }
                         }
                     }
@@ -457,18 +457,18 @@ fmpz_lll_check_babai_heuristic(int kappa, fmpz_mat_t B, fmpz_mat_t U,
 
                 for (j = zeros + 1; j < kappa; j++)
                 {
-                    fmpz_pow_ui(ztmp, x + j, 2);
+                    fmpz_pow_ui(ztmp, x + j - zeros - 1, 2);
                     fmpz_addmul(fmpz_mat_entry(GM, kappa, kappa),
                                 ztmp, fmpz_mat_entry(GM, j, j));
 
-                    fmpz_mul(ztmp, x + j, fmpz_mat_entry(GM, kappa, j));
+                    fmpz_mul(ztmp, x + j - zeros - 1, fmpz_mat_entry(GM, kappa, j));
                     fmpz_mul_2exp(ztmp, ztmp, 1);
                     fmpz_sub(fmpz_mat_entry(GM, kappa, kappa),
                              fmpz_mat_entry(GM, kappa, kappa), ztmp);
 
                     for (i = zeros + 1; i < j; i++)
                     {
-                        fmpz_mul(ztmp, x + i, x + j);
+                        fmpz_mul(ztmp, x + i - zeros - 1, x + j - zeros - 1);
                         fmpz_mul(ztmp, ztmp, fmpz_mat_entry(GM, j, i));
                         fmpz_mul_2exp(ztmp, ztmp, 1);
                         fmpz_add(fmpz_mat_entry(GM, kappa, kappa),
@@ -480,17 +480,17 @@ fmpz_lll_check_babai_heuristic(int kappa, fmpz_mat_t B, fmpz_mat_t U,
                 {
                     for (j = zeros + 1; j <= i; j++)
                         fmpz_submul(fmpz_mat_entry(GM, kappa, i),
-                                    x + j, fmpz_mat_entry(GM, i, j));
+                                    x + j - zeros - 1, fmpz_mat_entry(GM, i, j));
                     for (j = i + 1; j < kappa; j++)
                         fmpz_submul(fmpz_mat_entry(GM, kappa, i),
-                                    x + j, fmpz_mat_entry(GM, j, i));
+                                    x + j - zeros - 1, fmpz_mat_entry(GM, j, i));
                 }
 
                 for (i = kappa + 1; i < GM->r; i++)
                 {
                     for (j = zeros + 1; j < kappa; j++)
                         fmpz_submul(fmpz_mat_entry(GM, i, kappa),
-                                    x + j, fmpz_mat_entry(GM, i, j));
+                                    x + j - zeros - 1, fmpz_mat_entry(GM, i, j));
                 }
             }
 
